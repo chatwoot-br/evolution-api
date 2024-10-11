@@ -25,6 +25,12 @@ class Postgres {
         this.connected = false;
       });
 
+      this.pool.on('connect', (client) => {
+        const url = new URL(connectionString);
+        const searchPath = url.searchParams.get('search_path') || 'public';
+        client.query(`SET search_path TO ${searchPath}`);
+      });
+
       try {
         this.connected = true;
       } catch (e) {
