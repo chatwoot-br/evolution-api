@@ -546,6 +546,7 @@ export class ChatwootService {
     try {
       this.logger.verbose('--- Start createConversation ---');
       this.logger.verbose(`Instance: ${JSON.stringify(instance)}`);
+      this.logger.debug(`body: ${JSON.stringify(body)}`);
 
       const client = await this.clientCw(instance);
 
@@ -683,9 +684,10 @@ export class ChatwootService {
         this.logger.warn('Contact not created or found');
         return null;
       }
-
+      
       const contactId = contact?.payload?.id || contact?.payload?.contact?.id || contact?.id;
       this.logger.verbose(`Contact ID: ${contactId}`);
+      this.logger.debug(contact);
 
       const contactConversations = (await client.contacts.listConversations({
         accountId: this.provider.accountId,
@@ -732,12 +734,14 @@ export class ChatwootService {
       const data = {
         contact_id: contactId.toString(),
         inbox_id: filterInbox.id.toString(),
+        source_id: contact.payload?.contact_inbox?.source_id,
       };
-
+      
       if (this.provider.conversationPending) {
         data['status'] = 'pending';
       }
-
+      
+      this.logger.debug({ data });
       const conversation = await client.conversations.create({
         accountId: this.provider.accountId,
         data,
