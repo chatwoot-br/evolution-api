@@ -684,7 +684,7 @@ export class ChatwootService {
         this.logger.warn('Contact not created or found');
         return null;
       }
-      
+
       const contactId = contact?.payload?.id || contact?.payload?.contact?.id || contact?.id;
       this.logger.verbose(`Contact ID: ${contactId}`);
       this.logger.debug(contact);
@@ -731,21 +731,35 @@ export class ChatwootService {
         }
       }
 
+      const source_id = contact.payload?.contact_inbox?.source_id;
+
       const data = {
         contact_id: contactId.toString(),
-        inbox_id: filterInbox.id.toString(),
-        source_id: contact.payload?.contact_inbox?.source_id,
+        ...(source_id && { source_id }),
+        ...(!source_id && { inbox_id: filterInbox.id.toString() }),
       };
-      
+
       if (this.provider.conversationPending) {
         data['status'] = 'pending';
       }
-      
+
       this.logger.debug({ data });
-      const conversation = await client.conversations.create({
-        accountId: this.provider.accountId,
-        data,
-      });
+      let conversation: Awaited<ReturnType<typeof client.conversations.create>>;
+
+      try {
+        conversation = await client.conversations.create({
+          accountId: this.provider.accountId,
+          data,
+        });
+      } catch (error) {
+        this.logger.warn('retry conversations.create');
+        this.logger.warn(error);
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        conversation = await client.conversations.create({
+          accountId: this.provider.accountId,
+          data,
+        });
+      }
 
       if (!conversation) {
         this.logger.warn('Conversation not created or found');
@@ -757,6 +771,7 @@ export class ChatwootService {
       return conversation.id;
     } catch (error) {
       this.logger.error(`Error in createConversation: ${error}`);
+      this.logger.error(error);
     }
   }
 
