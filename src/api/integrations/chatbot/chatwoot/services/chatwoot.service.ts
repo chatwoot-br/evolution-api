@@ -440,7 +440,7 @@ export class ChatwootService {
     }
 
     if (!contact && contact?.payload?.length === 0) {
-      this.logger.warn('contact not found');
+      this.logger.warn(`contact not found: ${JSON.stringify(query)}`);
       return null;
     }
 
@@ -463,9 +463,24 @@ export class ChatwootService {
       });
 
       return contact;
-    } catch {
-      this.logger.error('Error merging contacts');
-      return null;
+    } catch (error) {
+      this.logger.error(`Error merging contacts: ${JSON.stringify(contacts)}`);
+      this.logger.error(error);
+
+      // FALLBACK: If the merge fails, we will try to merge the first and last contacts in the list
+      contacts.sort((a, b) => a.id - b.id);
+      const base_contact = contacts[0];
+      const mergee_contact = contacts[contacts.length - 1];
+      const contact = await chatwootRequest(this.getClientCwConfig(), {
+        method: 'POST',
+        url: `/api/v1/accounts/${this.provider.accountId}/actions/contact_merge`,
+        body: {
+          base_contact_id: base_contact?.id,
+          mergee_contact_id: mergee_contact?.id,
+        },
+      });
+
+      return contact;
     }
   }
 
@@ -549,6 +564,7 @@ export class ChatwootService {
       this.logger.debug(`body: ${JSON.stringify(body)}`);
 
       const client = await this.clientCw(instance);
+      // this.logger.debug({ client });
 
       if (!client) {
         this.logger.warn(`Client not found for instance: ${JSON.stringify(instance)}`);
@@ -754,7 +770,11 @@ export class ChatwootService {
       } catch (error) {
         this.logger.warn('retry conversations.create');
         this.logger.warn(error);
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await this.cache.delete(cacheKey);
+        await this.cache.delete(`${instance.instanceName}:getProvider`);
+        const client = await this.clientCw(instance);
+        // this.logger.debug({ client });
         conversation = await client.conversations.create({
           accountId: this.provider.accountId,
           data,
