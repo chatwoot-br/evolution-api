@@ -1,7 +1,7 @@
 FROM node:20 AS builder
 
 RUN apt-get update && \
-    apt-get install -y git ffmpeg wget curl bash openssl && \
+    apt-get install -y git ffmpeg wget curl bash openssl dos2unix && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -34,7 +34,12 @@ RUN npm run build
 FROM node:20 AS final
 
 RUN apt-get update && \
-    apt-get install -y tzdata ffmpeg bash openssl && \
+    apt-get install -y --no-install-recommends \
+    tzdata \
+    ffmpeg \
+    bash \
+    openssl \
+    ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
