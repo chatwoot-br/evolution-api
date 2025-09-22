@@ -6,9 +6,9 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/chatwoot-br/evolution-api
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v2.3.2
+  tag: v2.3.3
 
 imagePullSecrets: []
 nameOverride: ""
@@ -196,6 +196,33 @@ secret:
   S3_ACCESS_KEY: ""
   S3_SECRET_KEY: ""
   AUTHENTICATION_API_KEY: 00000000-0000-0000-0000-000000000000
+
+# Database Migration Configuration
+migration:
+  # Enable database migration init container
+  enabled: true
+
+  # Image configuration for migration init container
+  # If not specified, uses the same image as the main container
+  image:
+    repository: ""  # Uses main image.repository if empty
+    tag: ""         # Uses main image.tag if empty
+    pullPolicy: ""  # Uses main image.pullPolicy if empty
+
+  # Resource limits for migration init container
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # Additional volume mounts for migration init container
+  volumeMounts: []
+  # - name: migration-config
+  #   mountPath: /app/migration-config
+  #   readOnly: true
 
 serviceAccount:
   # Specifies whether a service account should be created
