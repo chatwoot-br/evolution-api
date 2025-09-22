@@ -567,20 +567,9 @@ export class BaileysStartupService extends ChannelStartupService {
       this.logger.info(`Browser: ${browser}`);
     }
 
-    const baileysVersion = await fetchLatestWaWebVersion({});
+    const baileysVersion = await fetchLatestWaWebVersion();
     const version = baileysVersion.version;
-    const log = `Baileys version: ${version.join('.')}`;
-
-    // if (session.VERSION) {
-    //   version = session.VERSION.split('.');
-    //   log = `Baileys version env: ${version}`;
-    // } else {
-    //   const baileysVersion = await fetchLatestWaWebVersion({});
-    //   version = baileysVersion.version;
-    //   log = `Baileys version: ${version}`;
-    // }
-
-    this.logger.info(log);
+    this.logger.info(`Baileys version fetched: ${JSON.stringify(baileysVersion)}`);
 
     this.logger.info(`Group Ignore: ${this.localSettings.groupsIgnore}`);
 
@@ -630,7 +619,7 @@ export class BaileysStartupService extends ChannelStartupService {
         keys: makeCacheableSignalKeyStore(this.instance.authState.state.keys, P({ level: 'error' }) as any),
       },
       msgRetryCounterCache: this.msgRetryCounterCache,
-      generateHighQualityLinkPreview: true,
+      generateHighQualityLinkPreview: false,
       getMessage: async (key) => (await this.getMessage(key)) as Promise<proto.IMessage>,
       ...browserOptions,
       markOnlineOnConnect: this.localSettings.alwaysOnline,
@@ -1272,7 +1261,7 @@ export class BaileysStartupService extends ChannelStartupService {
 
               await this.baileysCache.set(messageKey, true, 5 * 60);
             } else {
-              this.logger.info(`Update readed messages duplicated ignored [avoid deadlock]: ${messageKey}`);
+              this.logger.debug(`Update readed messages duplicated ignored [avoid deadlock]: ${messageKey}`);
             }
 
             if (isMedia) {
@@ -1446,7 +1435,7 @@ export class BaileysStartupService extends ChannelStartupService {
         const cached = await this.baileysCache.get(updateKey);
 
         if (cached) {
-          this.logger.info(`Message duplicated ignored [avoid deadlock]: ${updateKey}`);
+          this.logger.debug(`Message duplicated ignored [avoid deadlock]: ${updateKey}`);
           continue;
         }
 
@@ -1541,7 +1530,7 @@ export class BaileysStartupService extends ChannelStartupService {
                   data: { status: status[update.status] },
                 });
               } else {
-                this.logger.info(
+                this.logger.debug(
                   `Update readed messages duplicated ignored in message.update [avoid deadlock]: ${messageKey}`,
                 );
               }

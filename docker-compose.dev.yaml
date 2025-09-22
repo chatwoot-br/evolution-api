@@ -1,25 +1,26 @@
 services:
-  api:
-    container_name: evolution_api
-    image: evolution/api:local
-    build: .
+  postgres:
+    image: postgres:17
     restart: always
     ports:
-      - 8080:8080
+      - '5432:5432'
     volumes:
-      - evolution_instances:/evolution/instances
-    networks:
-      - evolution-net
-    env_file:
-      - .env
-    expose:
-      - 8080
+      - postgres:/data/postgres
+    environment:
+      - POSTGRES_DB=chatwoot_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=P@ssw0rd
+
+  redis:
+    image: redis:alpine
+    restart: always
+    command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
+    env_file: .env
+    volumes:
+      - redis:/data/redis
+    ports:
+      - '6379:6379'
 
 volumes:
-  evolution_instances:
-
-
-networks:
-  evolution-net:
-    name: evolution-net
-    driver: bridge
+  postgres:
+  redis:

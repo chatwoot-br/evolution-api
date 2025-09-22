@@ -3,6 +3,7 @@ import { InstanceDto } from '@api/dto/instance.dto';
 import { ChatwootDto } from '@api/integrations/chatbot/chatwoot/dto/chatwoot.dto';
 import { HttpStatus } from '@api/routes/index.router';
 import { chatwootController } from '@api/server.module';
+import { bottleneckService } from '@api/services/bottleneck.service';
 import { chatwootSchema, instanceSchema } from '@validate/validate.schema';
 import { RequestHandler, Router } from 'express';
 
@@ -31,14 +32,18 @@ export class ChatwootRouter extends RouterBroker {
         res.status(HttpStatus.OK).json(response);
       })
       .post(this.routerPath('webhook'), async (req, res) => {
-        const response = await this.dataValidate<InstanceDto>({
+        this.dataValidate<InstanceDto>({
           request: req,
           schema: instanceSchema,
           ClassRef: InstanceDto,
-          execute: (instance, data) => chatwootController.receiveWebhook(instance, data),
+          execute: async (instance, data) => {
+            res.status(HttpStatus.OK).json(data);
+            // Use bottleneck to queue webhook calls per instance with 1-second minimum interval
+            return bottleneckService.scheduleWebhook(instance.instanceName, () =>
+              chatwootController.receiveWebhook(instance, data),
+            );
+          },
         });
-
-        res.status(HttpStatus.OK).json(response);
       });
   }
 
