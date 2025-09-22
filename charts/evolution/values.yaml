@@ -1,0 +1,313 @@
+# Default values for evolution.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/chatwoot-br/evolution-api
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: v2.3.2
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+config:
+  #########################################################
+  #########################################################
+  # Configurações Gerais da API ###########################
+  #########################################################
+  #########################################################
+  # Configura o Endereço da Evolution
+  SERVER_URL: "https://evolution.chatwoot.app.br"
+  # Habilita a remoção automática da instâncias
+  DEL_INSTANCE: "false"
+  # Habilita o Provider Local de Cache (desabilitado por padrão)
+  PROVIDER_ENABLED: "false"
+  PROVIDER_HOST: "127.0.0.1"
+  PROVIDER_PORT: "5656"
+  PROVIDER_PREFIX: "evolution"
+  # Configura o Cliente do WhatsApp
+  CONFIG_SESSION_PHONE_CLIENT: "Windows"
+  CONFIG_SESSION_PHONE_NAME: "Chrome"
+  # Configura a Versão do WhatsApp
+  # Você pode consultar as versões no link abaixo:
+  # https://web.whatsapp.com/check-update?version=0&platform=web
+  # CONFIG_SESSION_PHONE_VERSION: "2.3000.1023247615"
+  # Informa a quantidade de QRCODE que será gerado
+  QRCODE_LIMIT: "3"
+  # Informa o idioma da Evolution
+  LANGUAGE: "pt-BR"
+  #########################################################
+  #########################################################
+  # Configurações de Autenticação da API ##################
+  #########################################################
+  #########################################################
+  AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES: "false"
+  #########################################################
+  #########################################################
+  # Configurações do Banco de Dados #######################
+  #########################################################
+  #########################################################
+  DATABASE_ENABLED: "true"
+  DATABASE_PROVIDER: "postgresql"
+  # Identificador da Evolution quando usa banco de dados
+  DATABASE_CONNECTION_CLIENT_NAME: "evolution"
+  DATABASE_SAVE_DATA_INSTANCE: "true"
+  DATABASE_SAVE_DATA_NEW_MESSAGE: "true"
+  DATABASE_SAVE_MESSAGE_UPDATE: "true"
+  DATABASE_SAVE_DATA_CONTACTS: "true"
+  DATABASE_SAVE_DATA_CHATS: "true"
+  DATABASE_SAVE_DATA_LABELS: "true"
+  DATABASE_SAVE_DATA_HISTORIC: "true"
+  #########################################################
+  #########################################################
+  # Configurações dos Eventos via RabbitMQ ################
+  #########################################################
+  #########################################################
+  RABBITMQ_ENABLED: "false"
+  RABBITMQ_EXCHANGE_NAME: "evolution"
+  RABBITMQ_GLOBAL_ENABLED: "false"
+  #########################################################
+  #########################################################
+  # Configurações dos Eventos via AWS SQS #################
+  #########################################################
+  #########################################################
+  SQS_ENABLED: "false"
+  SQS_ACCESS_KEY_ID: ""
+  SQS_SECRET_ACCESS_KEY: ""
+  SQS_ACCOUNT_ID: ""
+  SQS_REGION: ""
+  #########################################################
+  #########################################################
+  # Configurações de Web Socket ###########################
+  #########################################################
+  #########################################################
+  WEBSOCKET_ENABLED: "false"
+  WEBSOCKET_GLOBAL_EVENTS: "false"
+  #########################################################
+  #########################################################
+  # Configurações do WhatsApp Business Cloud ##############
+  #########################################################
+  #########################################################
+  WA_BUSINESS_TOKEN_WEBHOOK: "00000000-0000-0000-0000-000000000000"
+  WA_BUSINESS_URL: "https://graph.facebook.com"
+  WA_BUSINESS_VERSION: "v20.0"
+  WA_BUSINESS_LANGUAGE: "pt_BR"
+  #########################################################
+  #########################################################
+  # Configurações dos Eventos via Webhook #################
+  # Método não Recomendado. Usar fila com RabbitMQ ########
+  #########################################################
+  WEBHOOK_GLOBAL_URL: ""
+  WEBHOOK_GLOBAL_ENABLED: "false"
+  WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS: "false"
+  WEBHOOK_EVENTS_APPLICATION_STARTUP: "false"
+  WEBHOOK_EVENTS_QRCODE_UPDATED: "false"
+  WEBHOOK_EVENTS_MESSAGES_SET: "false"
+  WEBHOOK_EVENTS_MESSAGES_UPSERT: "false"
+  WEBHOOK_EVENTS_MESSAGES_EDITED: "false"
+  WEBHOOK_EVENTS_MESSAGES_UPDATE: "false"
+  WEBHOOK_EVENTS_MESSAGES_DELETE: "false"
+  WEBHOOK_EVENTS_SEND_MESSAGE: "false"
+  WEBHOOK_EVENTS_CONTACTS_SET: "false"
+  WEBHOOK_EVENTS_CONTACTS_UPSERT: "false"
+  WEBHOOK_EVENTS_CONTACTS_UPDATE: "false"
+  WEBHOOK_EVENTS_PRESENCE_UPDATE: "false"
+  WEBHOOK_EVENTS_CHATS_SET: "false"
+  WEBHOOK_EVENTS_CHATS_UPSERT: "false"
+  WEBHOOK_EVENTS_CHATS_UPDATE: "false"
+  WEBHOOK_EVENTS_CHATS_DELETE: "false"
+  WEBHOOK_EVENTS_GROUPS_UPSERT: "false"
+  WEBHOOK_EVENTS_GROUPS_UPDATE: "false"
+  WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE: "false"
+  WEBHOOK_EVENTS_CONNECTION_UPDATE: "false"
+  WEBHOOK_EVENTS_LABELS_EDIT: "false"
+  WEBHOOK_EVENTS_LABELS_ASSOCIATION: "false"
+  WEBHOOK_EVENTS_CALL: "false"
+  WEBHOOK_EVENTS_TYPEBOT_START: "false"
+  WEBHOOK_EVENTS_TYPEBOT_CHANGE_STATUS: "false"
+  WEBHOOK_EVENTS_ERRORS: "false"
+  WEBHOOK_EVENTS_ERRORS_WEBHOOK: ""
+  #########################################################
+  #########################################################
+  # Configurações do Typebot ##############################
+  #########################################################
+  #########################################################
+  TYPEBOT_ENABLED: "false"
+  TYPEBOT_API_VERSION: "latest"
+  TYPEBOT_KEEP_OPEN: "false"
+  TYPEBOT_SEND_MEDIA_BASE64: "true"
+  #########################################################
+  #########################################################
+  # Configurações do Chatwoot #############################
+  #########################################################
+  #########################################################
+  CHATWOOT_ENABLED: "true"
+  CHATWOOT_MESSAGE_READ: "true"
+  # Opcional
+  CHATWOOT_IMPORT_PLACEHOLDER_MEDIA_MESSAGE: "true"
+  #########################################################
+  #########################################################
+  # Configurações do Open Ai ##############################
+  #########################################################
+  #########################################################
+  OPENAI_ENABLED: "false"
+  OPENAI_API_KEY_GLOBAL: ""
+  #########################################################
+  #########################################################
+  # Configurações do Dify AI ##############################
+  #########################################################
+  #########################################################
+  DIFY_ENABLED: "false"
+  #########################################################
+  #########################################################
+  # Configurações do Cache da API #########################
+  #########################################################
+  #########################################################
+  CACHE_REDIS_ENABLED: "true"
+  CACHE_REDIS_PREFIX_KEY: "evolution"
+  CACHE_REDIS_SAVE_INSTANCES: "false"
+  CACHE_LOCAL_ENABLED: "false"
+  #########################################################
+  #########################################################
+  # Configurações do Armazenamento de Mídia / Arquivos  ###
+  #########################################################
+  #########################################################
+  S3_ENABLED: "false"
+  S3_BUCKET: "evolution"
+  S3_PORT: "443"
+  S3_ENDPOINT: "files.site.com"
+  S3_USE_SSL: "true"
+
+  # Determine the logs to be displayed
+  LOG_LEVEL: "ERROR,WARN"
+  LOG_COLOR: false
+  # Log Baileys - "fatal" | "error" | "warn" | "info" | "debug" | "trace"
+  LOG_BAILEYS: warn
+
+secret:
+  DATABASE_CONNECTION_URI: "postgresql://postgres:P@ssw0rd@postgres:5432/evolution"
+  RABBITMQ_URI: "amqp://usuario:P@ssw0rd@rabbitmq:5672/default"
+  CHATWOOT_IMPORT_DATABASE_CONNECTION_URI: "postgresql://postgres:P@ssw0rd@postgres:5432/chatwoot?sslmode=disable"
+  CACHE_REDIS_URI: "redis://redis:6379/1"
+  S3_ACCESS_KEY: ""
+  S3_SECRET_KEY: ""
+  AUTHENTICATION_API_KEY: 00000000-0000-0000-0000-000000000000
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+
+# Liveness Probe - verifica se a aplicação está rodando
+livenessProbe:
+  httpGet:
+    path: /health/liveness
+    port: 8080
+    scheme: HTTP
+  initialDelaySeconds: 30 # Aguarda 30s após startup
+  periodSeconds: 30 # Verifica a cada 30s
+  timeoutSeconds: 5 # Timeout de 5s por verificação
+  failureThreshold: 3 # 3 falhas consecutivas reinicia o pod
+  successThreshold: 1 # Uma verificação bem-sucedida é suficiente
+
+# Readiness Probe - verifica se a aplicação está pronta para receber tráfego
+readinessProbe:
+  httpGet:
+    path: /health/readiness
+    port: 8080
+    scheme: HTTP
+  initialDelaySeconds: 5 # Aguarda 5s após startup
+  periodSeconds: 10 # Verifica a cada 10s
+  timeoutSeconds: 3 # Timeout de 3s por verificação
+  failureThreshold: 3 # 3 falhas consecutivas remove do serviço
+  successThreshold: 1 # Uma verificação bem-sucedida é suficiente
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# values.yaml
+restartCronJob:
+  enabled: true # vira false se não quiser instalar
+  schedule: "0 5 * * *" # 05:00 todo dia
+  timezone: "America/Sao_Paulo"
+  # imagem leve que já traz kubectl
+  image:
+    repository: bitnami/kubectl
+    tag: 1.31 # mantenha alinhado ao seu cluster
+    pullPolicy: IfNotPresent
+  targetKind: Deployment # ou StatefulSet/DaemonSet/Pod
+  targetName: ""
+  # RBAC
+  serviceAccount:
+    create: true
+    name: "" # vazio → usa {{ include "evolution.fullname" . }}-restart
