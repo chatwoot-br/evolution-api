@@ -1788,7 +1788,13 @@ export class BaileysStartupService extends ChannelStartupService {
 
           if (events['group-participants.update']) {
             const payload = events['group-participants.update'];
-            this.groupHandler['group-participants.update'](payload);
+            // Extract participant IDs from GroupParticipant[] to string[]
+            const normalizedPayload = {
+              id: payload.id,
+              participants: payload.participants.map((p) => p.id),
+              action: payload.action,
+            };
+            this.groupHandler['group-participants.update'](normalizedPayload);
           }
         }
 
@@ -2154,7 +2160,7 @@ export class BaileysStartupService extends ChannelStartupService {
         const msg = m?.message ? m : ((await this.getMessage(m.key, true)) as proto.IWebMessageInfo);
 
         if (msg) {
-          quoted = msg;
+          quoted = msg as WAMessage;
         }
       }
 

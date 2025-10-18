@@ -1,5 +1,5 @@
 import { Logger } from '@config/logger.config';
-import { BaileysEventMap, MessageUpsertType, proto } from 'baileys';
+import { BaileysEventMap, MessageUpsertType, proto, WAMessage } from 'baileys';
 import { catchError, concatMap, delay, EMPTY, from, retryWhen, Subject, Subscription, take, tap } from 'rxjs';
 
 type MessageUpsertPayload = BaileysEventMap['messages.upsert'];
@@ -25,7 +25,7 @@ export class BaileysMessageProcessor {
           this.processorLogs.log(`Processing batch of ${messages.length} messages`);
         }),
         concatMap(({ messages, type, requestId, settings }) =>
-          from(onMessageReceive({ messages, type, requestId }, settings)).pipe(
+          from(onMessageReceive({ messages: messages as WAMessage[], type, requestId }, settings)).pipe(
             retryWhen((errors) =>
               errors.pipe(
                 tap((error) => this.processorLogs.warn(`Retrying message batch due to error: ${error.message}`)),
