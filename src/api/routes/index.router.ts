@@ -17,6 +17,7 @@ import { BusinessRouter } from './business.router';
 import { CallRouter } from './call.router';
 import { ChatRouter } from './chat.router';
 import { GroupRouter } from './group.router';
+import { HealthRouter } from './health.router';
 import { InstanceRouter } from './instance.router';
 import { LabelRouter } from './label.router';
 import { ProxyRouter } from './proxy.router';
@@ -189,6 +190,7 @@ router
   .use((req, res, next) => telemetry.collectTelemetry(req, res, next))
 
   .get('/', async (req, res) => {
+    const baileysVersion = await fetchLatestWaWebVersion();
     res.status(HttpStatus.OK).json({
       status: HttpStatus.OK,
       message: 'Welcome to the Evolution API, it is working!',
@@ -196,7 +198,7 @@ router
       clientName: databaseConfig.CONNECTION.CLIENT_NAME,
       manager: !serverConfig.DISABLE_MANAGER ? `${req.protocol}://${req.get('host')}/manager` : undefined,
       documentation: `https://doc.evolution-api.com`,
-      whatsappWebVersion: (await fetchLatestWaWebVersion({})).version.join('.'),
+      whatsappWebVersion: baileysVersion,
     });
   })
   .post('/verify-creds', authGuard['apikey'], async (req, res) => {
@@ -209,6 +211,8 @@ router
       facebookUserToken: facebookConfig.USER_TOKEN,
     });
   })
+  // Health check endpoints (sem guards para permitir acesso do Kubernetes)
+  .use('/', new HealthRouter().router)
   .use('/instance', new InstanceRouter(configService, ...guards).router)
   .use('/message', new MessageRouter(...guards).router)
   .use('/call', new CallRouter(...guards).router)

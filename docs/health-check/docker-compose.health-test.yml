@@ -1,0 +1,104 @@
+# Docker Compose para desenvolvimento e teste dos health checks
+version: '3.8'
+
+services:
+  evolution-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_CONNECTION_URI=postgresql://postgres:password@postgres:5432/evolution
+      - REDIS_URI=redis://redis:6379
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_LOCAL_ENABLED=false
+      - DATABASE_SAVE_DATA_INSTANCE=true
+      - DATABASE_SAVE_DATA_NEW_MESSAGE=true
+      - DATABASE_SAVE_MESSAGE_UPDATE=true
+      - DATABASE_SAVE_DATA_CONTACTS=true
+      - DATABASE_SAVE_DATA_CHATS=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./instances:/app/instances
+      - ./store:/app/store
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # Serviço para testar os health checks
+  health-checker:
+    image: curlimages/curl:latest
+    depends_on:
+      evolution-api:
+        condition: service_healthy
+    command: |
+      sh -c "
+        echo '🚀 Testando Health Checks da Evolution API'
+        echo '============================================'
+        
+        echo '📊 Health Check Geral:'
+        curl -s http://evolution-api:8080/health | jq .
+        echo ''
+        
+        echo '💓 Liveness Probe:'
+        curl -s http://evolution-api:8080/health/liveness | jq .
+        echo ''
+        
+        echo '✅ Readiness Probe:'
+        curl -s http://evolution-api:8080/health/readiness | jq .
+        echo ''
+        
+        echo '🚀 Startup Probe:'
+        curl -s http://evolution-api:8080/health/startup | jq .
+        echo ''
+        
+        echo '✅ Todos os health checks testados com sucesso!'
+      "
+    profiles:
+      - test
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: evolution-network

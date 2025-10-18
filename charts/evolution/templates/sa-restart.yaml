@@ -1,0 +1,29 @@
+{{- if and .Values.restartCronJob.enabled .Values.restartCronJob.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ default (printf "%s-restart" (include "evolution.fullname" .)) .Values.restartCronJob.serviceAccount.name }}
+  labels:
+    {{- include "evolution.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "evolution.fullname" . }}-restart
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["pods", "deployments", "statefulsets", "daemonsets"]
+  verbs: ["get", "patch", "delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "evolution.fullname" . }}-restart
+subjects:
+- kind: ServiceAccount
+  name: {{ default (printf "%s-restart" (include "evolution.fullname" .)) .Values.restartCronJob.serviceAccount.name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "evolution.fullname" . }}-restart
+{{- end }}
