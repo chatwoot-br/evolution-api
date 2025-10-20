@@ -82,7 +82,7 @@ import { createId as cuid } from '@paralleldrive/cuid2';
 import { Instance, Message } from '@prisma/client';
 import { createJid } from '@utils/createJid';
 import { fetchLatestWaWebVersion } from '@utils/fetchLatestWaWebVersion';
-import { makeProxyAgent } from '@utils/makeProxyAgent';
+import { makeProxyAgent, makeUndiciProxyAgent } from '@utils/makeProxyAgent';
 import { getOnWhatsappCache, saveOnWhatsappCache } from '@utils/onWhatsappCache';
 import { status } from '@utils/renderStatus';
 import { sendTelemetry } from '@utils/sendTelemetry';
@@ -583,7 +583,7 @@ export class BaileysStartupService extends ChannelStartupService {
           const proxyUrls = text.split('\r\n');
           const rand = Math.floor(Math.random() * Math.floor(proxyUrls.length));
           const proxyUrl = 'http://' + proxyUrls[rand];
-          options = { agent: makeProxyAgent(proxyUrl), fetchAgent: makeProxyAgent(proxyUrl) };
+          options = { agent: makeProxyAgent(proxyUrl), fetchAgent: makeUndiciProxyAgent(proxyUrl) };
         } catch {
           this.localProxy.enabled = false;
         }
@@ -596,7 +596,7 @@ export class BaileysStartupService extends ChannelStartupService {
             username: this.localProxy.username,
             password: this.localProxy.password,
           }),
-          fetchAgent: makeProxyAgent({
+          fetchAgent: makeUndiciProxyAgent({
             host: this.localProxy.host,
             port: this.localProxy.port,
             protocol: this.localProxy.protocol,
