@@ -9,6 +9,11 @@
 
 ### Fixed
 
+* **Proxy Media Upload**: Fixed media upload failures through proxy by using undici-compatible proxy agents
+  - Resolved `TypeError: fetch failed` errors when uploading media to WhatsApp CDN servers through HTTP/SOCKS proxies
+  - Added `makeUndiciProxyAgent()` function for undici-compatible fetch requests in Baileys integration
+  - Maintained backward compatibility with existing WebSocket proxy configuration
+  - Supports both authenticated and non-authenticated proxy configurations
 * **Kafka Migration**: Fixed PostgreSQL migration error for Kafka integration
   - Corrected table reference from `"public"."Instance"` to `"Instance"` in foreign key constraint
   - Fixed `ERROR: relation "public.Instance" does not exist` issue in migration `20250918182355_add_kafka_integration`
