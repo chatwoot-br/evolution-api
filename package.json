@@ -122,6 +122,7 @@
     "socks-proxy-agent": "^8.0.5",
     "swagger-ui-express": "^5.0.1",
     "tsup": "^8.3.5",
+    "undici": "^6.0.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

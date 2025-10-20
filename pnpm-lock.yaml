@@ -179,6 +179,9 @@ importers:
       tsup:
         specifier: ^8.3.5
         version: 8.5.0(jiti@2.6.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      undici:
+        specifier: ^6.0.0
+        version: 6.22.0
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
@@ -4697,6 +4700,10 @@ packages:
 
   undici-types@7.14.0:
     resolution: {integrity: sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==}
+
+  undici@6.22.0:
+    resolution: {integrity: sha512-hU/10obOIu62MGYjdskASR3CUAiYaFTtC9Pa6vHyf//mAipSvSQg6od2CnJswq7fvzNS3zJhxoRkgNVaHurWKw==}
+    engines: {node: '>=18.17'}
 
   unicorn-magic@0.1.0:
     resolution: {integrity: sha512-lRfVq8fE8gz6QMBuDM6a+LO3IAzTi05H6gCVaUpir2E1Rwpo4ZUog45KpNXKC/Mn3Yb9UDuHumeFTo9iV/D9FQ==}
@@ -10207,6 +10214,8 @@ snapshots:
   undici-types@5.26.5: {}
 
   undici-types@7.14.0: {}
+
+  undici@6.22.0: {}
 
   unicorn-magic@0.1.0: {}
 
