@@ -220,3 +220,105 @@ Repository (src/api/repository/)
 - **Telemetry** - Analytics de uso interno
 - **Sentry** - Rastreamento de erros e performance
 - **Health check endpoints** - Monitoramento de status da API
+
+## AI Assistant Tools (MCP)
+
+This project is configured with MCP (Model Context Protocol) tools to assist AI in development. Use these tools to work more efficiently with the codebase.
+
+### Serena MCP - Semantic Code Navigation
+**When to use**: For intelligent and efficient code exploration and editing
+
+Main tools available:
+- **`find_symbol`** - Search symbols (classes, functions, methods) by name or pattern
+- **`get_symbols_overview`** - Top-level symbol overview of a file
+- **`find_referencing_symbols`** - Find references to a specific symbol
+- **`search_for_pattern`** - Flexible regex search in codebase
+- **`replace_symbol_body`** - Replace symbol body (method, class, function)
+- **`insert_after_symbol`** / **`insert_before_symbol`** - Insert code at specific positions
+- **`list_dir`** - List directories and files (with recursion)
+- **`read_file`** - Read project files
+- **Memory tools** - `write_memory`, `read_memory`, `list_memories` for persistent context
+
+**Usage principles**:
+- ✅ Use symbolic tools BEFORE reading complete files
+- ✅ Read only the necessary code for the task
+- ✅ Use `get_symbols_overview` to understand file structure
+- ✅ Use `find_symbol` with type filters for precise searches
+- ❌ AVOID reading entire files unnecessarily
+- ❌ DO NOT read the same content multiple times with different tools
+
+**Configuration**: `.serena/project.yml`
+- Language: TypeScript
+- Encoding: UTF-8
+- Git ignore: Enabled
+- Read-only: Disabled (editing allowed)
+
+### Context7 MCP - Library Documentation
+**When to use**: To query up-to-date documentation for libraries and frameworks
+
+Available tools:
+- **`resolve-library-id`** - Resolve library name to Context7-compatible ID
+- **`get-library-docs`** - Get up-to-date library documentation
+
+**Usage flow**:
+1. First use `resolve-library-id` with the library name
+2. Use the returned ID with `get-library-docs` to get documentation
+
+**Example libraries in project**:
+- Express.js, Prisma, Socket.io, TypeScript, Node.js
+- @whiskeysockets/baileys (use "baileys" as search term)
+- OpenAI SDK, axios, Redis client
+
+### DeepWiki MCP - Repository Documentation
+**When to use**: To query specific documentation for Evolution API or Baileys
+
+Available repositories:
+- **`EvolutionAPI/evolution-api`** - This project's documentation
+  - Use to understand architectural decisions
+  - Consult development guides
+  - Check project best practices
+
+- **`WhiskeySockets/Baileys`** - WhatsApp Web client documentation
+  - Use to understand Baileys API
+  - Consult message sending methods
+  - Check WhatsApp event handling
+
+Available tools:
+- **`read_wiki_structure`** - List available documentation topics
+- **`read_wiki_contents`** - View complete documentation content
+- **`ask_question`** - Ask specific questions about the repository
+
+**Usage examples**:
+```typescript
+// Understand how Baileys handles messages
+ask_question("WhiskeySockets/Baileys", "How to send media messages?")
+
+// Query Evolution API architecture
+read_wiki_structure("EvolutionAPI/evolution-api")
+ask_question("EvolutionAPI/evolution-api", "How does the multi-tenancy system work?")
+```
+
+## Recommended Workflow for AI Assistants
+
+### For Code Exploration
+1. Use `list_dir` or `find_file` (Serena) to locate relevant files
+2. Use `get_symbols_overview` (Serena) to understand file structure
+3. Use `find_symbol` (Serena) to locate specific symbols
+4. Read only necessary symbols with `include_body=True`
+
+### For Documentation Query
+1. External libraries → Context7 (`resolve-library-id` + `get-library-docs`)
+2. Evolution API or Baileys → DeepWiki (`ask_question` or `read_wiki_contents`)
+3. Project conventions → Read CLAUDE.md, openspec/project.md files
+
+### For Code Editing
+1. Locate symbols with `find_symbol` (Serena)
+2. Use `replace_symbol_body` to replace complete definitions
+3. Use `insert_after_symbol`/`insert_before_symbol` to add code
+4. Check references with `find_referencing_symbols` before breaking changes
+
+### For Feature Planning (OpenSpec)
+1. Consult DeepWiki to understand existing patterns
+2. Use Serena to explore related code
+3. Use Context7 to verify library APIs
+4. Create proposal following OpenSpec format in `openspec/AGENTS.md`

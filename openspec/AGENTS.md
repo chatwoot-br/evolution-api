@@ -86,6 +86,33 @@ After deployment, create separate PR to:
   - Change: `openspec show <change-id> --json --deltas-only`
 - Full-text search (use ripgrep): `rg -n "Requirement:|Scenario:" openspec/specs`
 
+### MCP Tools for OpenSpec Workflow
+
+This project has MCP (Model Context Protocol) tools that should be used throughout the OpenSpec workflow. Consult `openspec/project.md` for complete details.
+
+**Serena MCP - Code Exploration**:
+- Use `find_symbol` to locate existing classes, methods and functions
+- Use `get_symbols_overview` to understand file structure before modifying
+- Use `find_referencing_symbols` to assess impact of breaking changes
+- Use `search_for_pattern` to find similar implementation patterns
+- ⚠️ ALWAYS use symbolic tools BEFORE reading complete files
+
+**Context7 MCP - Library Documentation**:
+- Use to query dependency APIs (Express, Prisma, Baileys, etc.)
+- Flow: `resolve-library-id` → `get-library-docs`
+- Useful to ensure correct library usage in specs
+
+**DeepWiki MCP - Repository Documentation**:
+- **EvolutionAPI/evolution-api**: Consult project patterns and architectural decisions
+- **WhiskeySockets/Baileys**: Consult WhatsApp Web client API
+- Use `ask_question` for specific queries
+- Use `read_wiki_structure` to explore available topics
+
+**When to use during OpenSpec**:
+- **Creating Proposals**: Use Serena to understand existing code, DeepWiki for project patterns
+- **Writing Specs**: Use Context7 to verify library APIs, Serena to check existing symbols
+- **Implementing**: Use all tools for efficient and well-informed development
+
 ## Quick Start
 
 ### CLI Commands
@@ -406,10 +433,21 @@ Only add complexity with:
 
 | Task | Tool | Why |
 |------|------|-----|
-| Find files by pattern | Glob | Fast pattern matching |
-| Search code content | Grep | Optimized regex search |
-| Read specific files | Read | Direct file access |
+| Find files by pattern | Serena `list_dir` or `find_file` | Semantic file search with gitignore |
+| Search code content | Serena `search_for_pattern` | Flexible regex with context |
+| Find symbols/classes | Serena `find_symbol` | Semantic code navigation |
+| Get file overview | Serena `get_symbols_overview` | Top-level structure without reading full file |
+| Find references | Serena `find_referencing_symbols` | Impact analysis for changes |
+| Read specific files | Serena `read_file` or Read | Direct file access |
+| Library documentation | Context7 `resolve-library-id` + `get-library-docs` | Up-to-date API docs |
+| Project documentation | DeepWiki `ask_question` | Evolution API or Baileys specific docs |
 | Explore unknown scope | Task | Multi-step investigation |
+
+**Preferred Tool Order**:
+1. **Serena first** - For code navigation and semantic exploration
+2. **Context7** - For external library documentation queries
+3. **DeepWiki** - For Evolution API or Baileys specific patterns
+4. **Fallback tools** (Glob, Grep, Read) - Only if Serena not available
 
 ## Error Recovery
 
