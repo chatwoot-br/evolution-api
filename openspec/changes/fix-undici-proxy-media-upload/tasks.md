@@ -261,9 +261,9 @@ describe('makeUndiciProxyAgent', () => {
 4. Commit: `docs: update CHANGELOG for proxy media upload fix`
 
 **Validation:**
-- [ ] CHANGELOG entry is clear and accurate
-- [ ] Entry is in correct version section
-- [ ] Related issue/PR numbers included
+- [x] CHANGELOG entry is clear and accurate
+- [x] Entry is in correct version section
+- [x] Related issue/PR numbers included
 
 ---
 
@@ -278,9 +278,9 @@ describe('makeUndiciProxyAgent', () => {
 4. Commit: `docs: clarify proxy support for media uploads`
 
 **Validation:**
-- [ ] Documentation updated
-- [ ] Proxy configuration examples remain valid
-- [ ] Troubleshooting tips added
+- [x] Documentation updated
+- [x] Proxy configuration examples remain valid
+- [x] Troubleshooting tips added
 
 ---
 
