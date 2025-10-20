@@ -1,5 +1,6 @@
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { SocksProxyAgent } from 'socks-proxy-agent';
+import { ProxyAgent as UndiciProxyAgent } from 'undici';
 
 type Proxy = {
   host: string;
@@ -41,4 +42,26 @@ export function makeProxyAgent(proxy: Proxy | string): HttpsProxyAgent<string> |
   }
 
   return selectProxyAgent(proxyUrl);
+}
+
+/**
+ * Creates an undici-compatible proxy agent for fetch requests.
+ * Used by Baileys for media uploads to WhatsApp CDN servers.
+ *
+ * @param proxy - Proxy URL string or Proxy configuration object
+ * @returns UndiciProxyAgent configured for the specified proxy
+ */
+export function makeUndiciProxyAgent(proxy: Proxy | string): UndiciProxyAgent {
+  if (typeof proxy === 'string') {
+    return new UndiciProxyAgent(proxy);
+  }
+
+  const { host, password, port, protocol, username } = proxy;
+  let proxyUrl = `${protocol}://${host}:${port}`;
+
+  if (username && password) {
+    proxyUrl = `${protocol}://${username}:${password}@${host}:${port}`;
+  }
+
+  return new UndiciProxyAgent(proxyUrl);
 }
