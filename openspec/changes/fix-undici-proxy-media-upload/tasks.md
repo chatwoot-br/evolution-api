@@ -18,9 +18,9 @@ Implementation tasks to fix proxy agent compatibility for Baileys media uploads,
 4. Commit: `chore(deps): add undici for proxy agent support`
 
 **Validation:**
-- [ ] `undici` appears in `package.json` under `dependencies`
-- [ ] `pnpm-lock.yaml` updated with undici entry
-- [ ] No dependency conflicts reported by pnpm
+- [x] `undici` appears in `package.json` under `dependencies`
+- [x] `pnpm-lock.yaml` updated with undici entry
+- [x] No dependency conflicts reported by pnpm
 
 ---
 
@@ -66,9 +66,9 @@ export function makeUndiciProxyAgent(proxy: Proxy | string): UndiciProxyAgent {
 ```
 
 **Validation:**
-- [ ] Function compiles without TypeScript errors
-- [ ] Function is exported from `makeProxyAgent.ts`
-- [ ] JSDoc comments are present and accurate
+- [x] Function compiles without TypeScript errors
+- [x] Function is exported from `makeProxyAgent.ts`
+- [x] JSDoc comments are present and accurate
 
 ---
 
@@ -123,10 +123,10 @@ if (this.localProxy?.enabled) {
 ```
 
 **Validation:**
-- [ ] TypeScript compiles without errors
-- [ ] Both proxy configuration paths updated (proxyscrape and direct)
-- [ ] Import statement for `makeUndiciProxyAgent` added
-- [ ] Existing `makeProxyAgent` import remains
+- [x] TypeScript compiles without errors
+- [x] Both proxy configuration paths updated (proxyscrape and direct)
+- [x] Import statement for `makeUndiciProxyAgent` added
+- [x] Existing `makeProxyAgent` import remains
 
 ---
 
