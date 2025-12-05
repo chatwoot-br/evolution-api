@@ -78,6 +78,7 @@
     "audio-decode": "^2.2.3",
     "axios": "^1.7.9",
     "baileys": "7.0.0-rc.9",
+    "bottleneck": "^2.19.5",
     "class-validator": "^0.14.1",
     "compression": "^1.7.5",
     "cors": "^2.8.5",

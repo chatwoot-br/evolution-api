@@ -587,7 +587,7 @@ export class BaileysStartupService extends ChannelStartupService {
       this.logger.info(`Browser: ${browser}`);
     }
 
-    const baileysVersion = await fetchLatestWaWebVersion({});
+    const baileysVersion = await fetchLatestWaWebVersion();
     const version = baileysVersion.version;
     const log = `Baileys version: ${version.join('.')}`;
 
@@ -641,7 +641,7 @@ export class BaileysStartupService extends ChannelStartupService {
         keys: makeCacheableSignalKeyStore(this.instance.authState.state.keys, P({ level: 'error' }) as any),
       },
       msgRetryCounterCache: this.msgRetryCounterCache,
-      generateHighQualityLinkPreview: true,
+      generateHighQualityLinkPreview: false,
       getMessage: async (key) => (await this.getMessage(key)) as Promise<proto.IMessage>,
       ...browserOptions,
       markOnlineOnConnect: this.localSettings.alwaysOnline,
@@ -1268,7 +1268,7 @@ export class BaileysStartupService extends ChannelStartupService {
 
               await this.baileysCache.set(messageKey, true, this.MESSAGE_CACHE_TTL_SECONDS);
             } else {
-              this.logger.info(`Update readed messages duplicated ignored [avoid deadlock]: ${messageKey}`);
+              this.logger.debug(`Update readed messages duplicated ignored [avoid deadlock]: ${messageKey}`);
             }
 
             if (isMedia) {
@@ -1553,7 +1553,7 @@ export class BaileysStartupService extends ChannelStartupService {
                   data: { status: status[update.status] },
                 });
               } else {
-                this.logger.info(
+                this.logger.debug(
                   `Update readed messages duplicated ignored in message.update [avoid deadlock]: ${messageKey}`,
                 );
               }
@@ -2200,7 +2200,7 @@ export class BaileysStartupService extends ChannelStartupService {
         const msg = m?.message ? m : ((await this.getMessage(m.key, true)) as WAMessage);
 
         if (msg) {
-          quoted = msg;
+          quoted = msg as WAMessage;
         }
       }
 

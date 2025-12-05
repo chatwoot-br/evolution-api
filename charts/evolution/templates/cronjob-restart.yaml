@@ -1,0 +1,42 @@
+{{- /*
+CronJob que força rolling-restart
+Habilitado somente se .Values.restartCronJob.enabled = true
+*/ -}}
+{{- if .Values.restartCronJob.enabled }}
+{{- /* --------- helpers --------- */}}
+{{- $timezone     := default "UTC" .Values.restartCronJob.timezone }}
+{{- $targetKind   := default "Deployment" .Values.restartCronJob.targetKind }}
+{{- $targetName   := default (include "evolution.fullname" .) .Values.restartCronJob.targetName }}
+{{- $saName       := default (printf "%s-restart" (include "evolution.fullname" .)) .Values.restartCronJob.serviceAccount.name }}
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "evolution.fullname" . }}-restart
+  labels:
+    {{- include "evolution.labels" . | nindent 4 }}
+  annotations:
+    cronjob.kubernetes.io/timezone: "{{ $timezone }}"
+spec:
+  schedule: "{{ .Values.restartCronJob.schedule }}"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ $saName }}
+          containers:
+          - name: kubectl
+            image: "{{ .Values.restartCronJob.image.repository }}:{{ .Values.restartCronJob.image.tag }}"
+            imagePullPolicy: {{ .Values.restartCronJob.image.pullPolicy }}
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Rolling-restart de {{ $targetKind }}/{{ $targetName }} @ $(date -Iseconds)"
+              kubectl patch {{ $targetKind | lower }} {{ $targetName }} \
+                -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"restartedAt\":\"$(date -Iseconds)\"}}}}}"
+{{- end }}

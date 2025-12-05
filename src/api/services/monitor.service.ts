@@ -12,6 +12,7 @@ import EventEmitter2 from 'eventemitter2';
 import { rmSync } from 'fs';
 import { join } from 'path';
 
+import { bottleneckService } from './bottleneck.service';
 import { CacheService } from './cache.service';
 
 export class WAMonitoringService {
@@ -398,6 +399,9 @@ export class WAMonitoringService {
 
         this.cleaningUp(instanceName);
         this.cleaningStoreData(instanceName);
+
+        // Clean up bottleneck limiter for this instance
+        bottleneckService.removeInstanceLimiter(instanceName);
       } finally {
         this.logger.warn(`Instance "${instanceName}" - REMOVED`);
       }
@@ -419,6 +423,9 @@ export class WAMonitoringService {
         }
 
         this.cleaningUp(instanceName);
+
+        // Clean up bottleneck limiter for this instance on logout as well
+        bottleneckService.removeInstanceLimiter(instanceName);
       } finally {
         this.logger.warn(`Instance "${instanceName}" - LOGOUT`);
       }
