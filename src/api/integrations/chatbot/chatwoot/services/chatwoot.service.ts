@@ -509,7 +509,7 @@ export class ChatwootService {
     }
 
     if (!contact && contact?.payload?.length === 0) {
-      this.logger.warn('contact not found');
+      this.logger.warn(`contact not found: ${JSON.stringify(query)}`);
       return null;
     }
 
@@ -550,9 +550,24 @@ export class ChatwootService {
       });
 
       return contact;
-    } catch {
-      this.logger.error('Error merging contacts');
-      return null;
+    } catch (error) {
+      this.logger.error(`Error merging contacts: ${JSON.stringify(contacts)}`);
+      this.logger.error(error);
+
+      // FALLBACK: If the merge fails, we will try to merge the first and last contacts in the list
+      contacts.sort((a, b) => a.id - b.id);
+      const base_contact = contacts[0];
+      const mergee_contact = contacts[contacts.length - 1];
+      const contact = await chatwootRequest(this.getClientCwConfig(), {
+        method: 'POST',
+        url: `/api/v1/accounts/${this.provider.accountId}/actions/contact_merge`,
+        body: {
+          base_contact_id: base_contact?.id,
+          mergee_contact_id: mergee_contact?.id,
+        },
+      });
+
+      return contact;
     }
   }
 
@@ -742,6 +757,7 @@ export class ChatwootService {
           this.logger.verbose(`Participant profile picture URL: ${JSON.stringify(picture_url)}`);
 
           const findParticipant = await this.findContact(instance, participantJid.split('@')[0]);
+          this.logger.verbose(`Found participant: ${JSON.stringify(findParticipant)}`);
 
           if (findParticipant) {
             this.logger.verbose(
