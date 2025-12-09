@@ -1,0 +1,10 @@
+onlyBuiltDependencies:
+  - '@ffmpeg-installer/darwin-arm64'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@scarf/scarf'
+  - baileys
+  - esbuild
+  - prisma
+  - protobufjs
+  - sharp
