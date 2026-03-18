@@ -21,7 +21,9 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if not .Values.existingSecret }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -51,7 +53,7 @@ spec:
             - configMapRef:
                 name: "{{ .Release.Name }}-config"
             - secretRef:
-                name: "{{ .Release.Name }}-secrets"
+                name: {{ .Values.existingSecret | default (printf "%s-secrets" .Release.Name) | quote }}
           env:
             - name: DOCKER_ENV
               value: "true"
@@ -72,7 +74,7 @@ spec:
             - configMapRef:
                 name: "{{ .Release.Name }}-config"
             - secretRef:
-                name: "{{ .Release.Name }}-secrets"
+                name: {{ .Values.existingSecret | default (printf "%s-secrets" .Release.Name) | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
