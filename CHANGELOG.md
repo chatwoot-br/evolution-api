@@ -1,3 +1,15 @@
+# 2.3.8 (2026-03-18)
+
+### Features
+
+* **Helm Chart**: Add `existingSecret` support
+  - New `existingSecret` field in `values.yaml` to reference a pre-created Secret
+  - When set, the chart skips creating its own Secret and uses the existing one
+  - Enables credentials management via External Secrets Operator (ESO) or other external secret managers
+  - Deployment `envFrom` references the existing Secret name
+  - Secret checksum annotation skipped when using external Secret (avoids unnecessary restarts)
+  - Fully backward compatible — default behavior unchanged
+
 # 2.3.7 (2025-12-05)
 
 ### Features
